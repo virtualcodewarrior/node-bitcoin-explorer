@@ -11,9 +11,12 @@ var bigint = global.bigint = bitcoin.bigint;
 
 global.Util = require('./util');
 
+
 var app = module.exports = express.createServer();
 
-var storage = new bitcoin.Storage('mongodb://localhost/bitcoin');
+var init = require('bitcoin-p2p/daemon/init');
+var config = init.getConfig();
+var storage = new bitcoin.Storage(config.storage.uri);
 //var node = new bitcoin.Node();
 //var chain = node.getBlockChain();
 
