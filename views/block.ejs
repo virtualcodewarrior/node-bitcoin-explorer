@@ -38,7 +38,7 @@
 <% txs.forEach(function (tx) { %>
 	<tr>
 	  <td><span class="mono"><a href="../../tx/<%=Util.formatHashFull(tx.getHash())%>"><%=Util.formatHashAlt(tx.getHash())%></a></span></td>
-	  <td><%=tx.fee ? Util.formatValue(tx.fee) : ""%></td>
+	  <td class="fee"><%=tx.fee ? Util.formatValue(tx.fee) : ""%></td>
 	  <td><%=tx.serialize().length%></td>
 	  <td style="white-space: nowrap;">
 		<% tx.ins.forEach(function (txin) { %>
