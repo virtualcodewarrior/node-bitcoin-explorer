@@ -5,6 +5,7 @@
 
 var express = require('express');
 var winston = require('winston');
+var Step = require('step');
 var bitcoin = require('bitcoin-p2p');
 var bigint = global.bigint = bitcoin.bigint;
 
@@ -28,7 +29,7 @@ app.configure(function(){
 });
 
 app.configure('development', function(){
-	app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function(){
@@ -39,48 +40,59 @@ function getOutpoints(txs, callback) {
 	// If we got only one tx, wrap it so we can use the same code afterwards
 	if (txs.hash) txs = [txs];
 
-	var txList = [];
+	var txList = {};
 	txs.forEach(function (tx) {
 		tx.ins.forEach(function (txin) {
-			txList.push(txin.outpoint.hash);
+      if (Util.NULL_HASH.equals(txin.outpoint.hash)) {
+        return;
+      }
+			txList[txin.o.toString('base64')] = {
+        hash: txin.outpoint.hash,
+        index: txin.outpoint.index,
+        target: txin
+      };
 		});
 	});
-	storage.Transaction.find({_id: {"$in": txList}}, function (err, result) {
-		if (err) return callback(err);
 
-    try {
-		  var txIndex = {};
-		  result.forEach(function (tx) {
-			  txIndex[tx.hash.toString('base64')] = tx;
-		  });
+  Step(function () {
+    var parallel = this.parallel;
+    Object.keys(txList).forEach(function (key) {
+      var callback = parallel();
+      var point = txList[key];
+      storage.Transaction.findOne({_id: point.hash}, {_id: 1, outs: {$slice: [point.index, 1]}}, function (err, result) {
+        try {
+          if (err) throw err;
 
-		  txs.forEach(function (tx, i) {
-			  tx.totalIn = bigint(0);
-			  tx.totalOut = bigint(0);
-			  tx.ins.forEach(function (txin, j) {
-          if (txin.isCoinBase()) return;
-
-				  var op = txin.outpoint;
-				  var srctx = txIndex[op.hash.toString('base64')];
-				  if (srctx) {
-					  txin.source = srctx.outs[op.index];
-					  tx.totalIn = tx.totalIn.add(Util.valueToBigInt(txin.source.value));
-				  } else {
-            throw new Error("Unable to find source output for tx "+
-                            Util.formatHash(tx.hash));
+          var srcout = result.outs[0];
+          if (!srcout) {
+            throw new Error("Unable to find source output "+
+                            Util.formatHash(point.hash) + ":" +
+                            point.index);
           }
-			  });
-			  tx.outs.forEach(function (txout) {
-				  tx.totalOut = tx.totalOut.add(Util.valueToBigInt(txout.value));
-			  });
-			  if (!tx.isCoinBase()) tx.fee = tx.totalIn.sub(tx.totalOut);
-		  });
+          point.target.source = srcout;
+          callback();
+        } catch (err) {
+          callback(err);
+        }
+      });
+    });
+  }, function (err) {
+		txs.forEach(function (tx, i) {
+			tx.totalIn = bigint(0);
+			tx.totalOut = bigint(0);
+			tx.ins.forEach(function (txin, j) {
+        if (txin.isCoinBase()) return;
 
-		  callback(null);
-    } catch (e) {
-      return callback(e);
-    }
-	});
+				tx.totalIn = tx.totalIn.add(Util.valueToBigInt(txin.source.value));
+			});
+			tx.outs.forEach(function (txout) {
+				tx.totalOut = tx.totalOut.add(Util.valueToBigInt(txout.value));
+			});
+			if (!tx.isCoinBase()) tx.fee = tx.totalIn.sub(tx.totalOut);
+		});
+
+    this();
+  }, callback);
 }
 
 // Params
