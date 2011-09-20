@@ -108,6 +108,21 @@ app.param('blockHash', function (req, res, next, hash){
 			storage.Transaction.find({_id: {$in: block.txs}}, function (err, txs) {
 				if (err) return next(err);
 
+        // Order the transactions
+        var txIndex = {};
+        txs.forEach(function (tx) {
+          txIndex[tx._id.toString('base64')] = tx;
+        });
+        txs = [];
+        block.txs.forEach(function (hash) {
+          var hash64 = hash.toString('base64');
+          var tx = txIndex[hash64];
+          if (!tx) {
+            throw new Error("Transaction is missing from database.");
+          }
+          txs.push(tx);
+        });
+
 				getOutpoints(txs, function (err) {
 					if (err) return next(err);
 
