@@ -8,7 +8,7 @@ Explorer](http://blockexplorer.com/) website.
 # Installation
 
 Before you install `node-bitcoin-explorer`, make sure you have
-(node-bitcoin-p2p)[https://github.com/bitcoinjs/node-bitcoin-p2p]
+[node-bitcoin-p2p](https://github.com/bitcoinjs/node-bitcoin-p2p)
 installed.
 
 ``` sh
