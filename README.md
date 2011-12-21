@@ -18,8 +18,8 @@ git clone git://github.com/justmoon/node-bitcoin-explorer.git --recursive
 # Go to folder
 cd node-bitcoin-explorer
 
-# Link to global bitcoin-p2p installation
-npm link bitcoin-p2p
+# Link to global bitcoinjs installation
+npm link bitcoinjs
 
 # Install dependencies
 npm install
