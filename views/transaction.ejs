@@ -1,19 +1,19 @@
 <h1>Transaction</h1>
 <dl class="props">
   <dt>Hash</dt>
-  <dd><span class="mono"><%=Util.formatHashFull(tx.hash)%></span></dd>
+  <dd><span class="mono"><%=tx.hash%></span></dd>
   <dt>Block</dt>
-  <dd><a href="../../block/<%=Util.formatHashFull(block.hash)%>"><%=block.height-1%></a> (<%=new Date(block.timestamp*1000).toUTCString()%>)</dd>
+  <dd><a href="../../block/<%=block.hash%>"><%=block.height-1%></a> (<%=new Date(block.time*1000).toUTCString()%>)</dd>
   <dt>Inputs #</dt>
-  <dd><%=tx.ins.length%></dd>
+  <dd><%=tx.in.length%></dd>
   <dt>Total (in)</dt>
-  <dd><%=Util.formatValue(tx.totalIn.add(block.getBlockValue()))%> BTC</dd></dd>
+  <dd><%=tx.totalIn%> BTC</dd></dd>
   <dt>Outputs #</dt>
-  <dd><%=tx.outs.length%></dd>
+  <dd><%=tx.out.length%></dd>
   <dt>Total (out)</dt>
-  <dd><%=Util.formatValue(totalOut)%> BTC</dd>
+  <dd><%=tx.totalOut%> BTC</dd>
   <dt>Size</dt>
-  <dd><%=tx.serialize().length%> bytes</dd>
+  <dd><%=tx.size%> bytes</dd>
 </dl>
 <h2>Inputs</h2>
 <table>
@@ -27,20 +27,21 @@
 	</tr>
   </thead>
   <tbody>
-	<% tx.ins.forEach(function (txin) { %>
+	<% tx.in.forEach(function (txin) { %>
 		<tr>
-		  <% if (txin.isCoinBase()) { %>
+		  <% if (txin.coinbase) { %>
 			  <td>N/A</td>
-			  <td><%=Util.formatValue(block.getBlockValue())%> + fees</td>
+			  <td>50 + fees</td>
 			  <td>N/A</td>
 			  <td>Generation</td>
+        <td><span class="mono"><%=txin.coinbase%></span></td>
 		  <% } else { %>
-			  <td><a class="mono" href="../../tx/<%=Util.formatHashFull(txin.outpoint.hash)%>"><%=Util.formatHashAlt(txin.outpoint.hash)%>&hellip;</a> (<%=txin.outpoint.index%>)</td>
-			  <td>N/A</td>
-			  <td><a href="../../address/<%=Util.pubKeyHashToAddress(txin.source.getScript().simpleOutPubKeyHash())%>"><%=Util.pubKeyHashToAddress(txin.source.getScript().simpleOutPubKeyHash())%></a></td>
-			  <td><%=txin.getScript().getInType()%></td>
+			  <td><a class="mono" href="../../tx/<%=txin.prev_out.hash%>"><%=txin.prev_out.hash.substr(0, 10)%>&hellip;</a> (<%=txin.prev_out.n%>)</td>
+			  <td><%=txin.value%></td>
+			  <td><a href="../../address/<%=txin.sourceAddr%>"><%=txin.sourceAddr%></a></td>
+			  <td><%=txin.type%></td>
+        <td><span class="mono"><%=txin.scriptSig%></span></td>
 		  <% } %>
-		  <td><span class="mono"><%=txin.getScript().getStringContent()%></span></td>
 		</tr>
     <% }); %>
   </tbody>
@@ -57,13 +58,13 @@
 	</tr>
   </thead>
   <tbody>
-	<% tx.outs.forEach(function (txout, i) { %>
+	<% tx.out.forEach(function (txout, i) { %>
 		<tr>
 		  <td><%=i%></td>
-	      <td><%=Util.formatValue(txout.value)%></td>
-	      <td><a href="../../address/<%=Util.pubKeyHashToAddress(txout.getScript().simpleOutPubKeyHash())%>"><%=Util.pubKeyHashToAddress(txout.getScript().simpleOutPubKeyHash())%></a></td>
-		  <td><%=txout.getScript().getOutType()%></td>
-	      <td><span class="mono"><%=txout.getScript().getStringContent()%></span></td>
+	      <td><%=txout.value%></td>
+	      <td><a href="../../address/<%=txout.toAddr%>"><%=txout.toAddr%></a></td>
+		  <td><%=txout.type%></td>
+	      <td><span class="mono"><%=txout.scriptPubKey%></span></td>
 		</tr>
     <% }); %>
   </tbody>

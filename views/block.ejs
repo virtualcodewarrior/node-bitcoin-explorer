@@ -1,25 +1,25 @@
 <h1>Block <%=block.height%></h1>
 <dl class="props">
   <dt>Hash</dt>
-  <dd><span class="mono"><%=Util.formatHashFull(block.hash)%></span></dd>
+  <dd><span class="mono"><%=block.hash%></span></dd>
   <dt>Previous Block</dt>
-  <dd><span class="mono"><a href="<%=Util.formatHashFull(block.prev_hash)%>"><%=Util.formatHashFull(block.prev_hash)%></a></span></dd>
+  <dd><span class="mono"><a href="<%=block.prev_block%>"><%=block.prev_block%></a></span></dd>
 <% if (nextBlock) { %>
 	<dt>Next Block</dt>
-	<dd><span class="mono"><a href="<%=Util.formatHashFull(nextBlock.hash)%>"><%=Util.formatHashFull(nextBlock.hash)%></a></span></dd>
+	<dd><span class="mono"><a href="<%=nextBlock.hash%>"><%=nextBlock.hash%></a></span></dd>
 <% } %>
   <dt>Time</dt>
-  <dd><%=new Date(block.timestamp*1000).toUTCString()%></dd>
+  <dd><%=new Date(block.time*1000).toUTCString()%></dd>
   <dt>Difficulty</dt>
   <dd><%=Util.calcDifficulty(parseInt(block.bits))%> (Bits: <%=hexDifficulty%>)</dd>
   <dt>Transactions</dt>
   <dd><%=txs.length%></dd>
   <dt>Total</dt>
-  <dd><%=Util.formatValue(totalOut)%> BTC</dd>
+  <dd><%=totalOut%> BTC</dd>
   <dt>Size</dt>
   <dd><%=block.size%> bytes</dd>
   <dt>Merkle root</dt>
-  <dd><span class="mono"><%=Util.formatHashFull(block.merkle_root)%></span></dd>
+  <dd><span class="mono"><%=block.mrkl_root%></span></dd>
   <dt>Nonce</dt>
   <dd><%=block.nonce%></dd>
 
@@ -37,32 +37,28 @@
   <tbody>
 <% txs.forEach(function (tx) { %>
 	<tr>
-	  <td><span class="mono"><a href="../../tx/<%=Util.formatHashFull(tx.getHash())%>"><%=Util.formatHashAlt(tx.getHash())%></a></span></td>
-	  <td class="fee"><%=tx.fee ? Util.formatValue(tx.fee) : ""%></td>
-	  <td><%=tx.serialize().length%></td>
+	  <td><span class="mono"><a href="../../tx/<%=tx.hash%>"><%=tx.hash.substr(0, 10)%></a></span></td>
+	  <td class="fee"><%=tx.fee ? tx.fee : ''%></td>
+	  <td><%=tx.size%></td>
 	  <td style="white-space: nowrap;">
-		<% tx.ins.forEach(function (txin) { %>
-			<% if (txin.isCoinBase()) { %>
-				Generation: 50 + <%=Util.formatValue(totalFee)%> total fees
+		<% tx.in.forEach(function (txin) { %>
+			<% if (txin.coinbase) { %>
+				Generation: <%=blockValue%> + <%=totalFee%> total fees
 			<% } else { %>
-				<%=Util.formatValue(txin.source.value)%>
-				<%
-				  var addr = Util.pubKeyHashToAddress(txin.source.getScript().simpleOutPubKeyHash());
-			      if (addr.length) { %>
-			    <a href="../../address/<%=addr%>"><%=addr%></a>
-		       <% } %>
-           <% } %>
-		   <br>
+				<%=txin.value%>
+				<% if (txin.sourceAddr.length) { %>
+			    <a href="../../address/<%=txin.sourceAddr%>"><%=txin.sourceAddr%></a>
+		    <% } %>
+      <% } %>
+		  <br>
 		<% }); %>
 	  </td>
 	  <td style="white-space: nowrap;">
-		<% tx.outs.forEach(function (txout) { %>
-			<%=Util.formatValue(txout.value)%>
-			<%
-			  var addr = Util.pubKeyHashToAddress(txout.getScript().simpleOutPubKeyHash());
-			if (addr.length) { %>
-			    <a href="../../address/<%=addr%>"><%=addr%></a>
-		    <% } %>
+		<% tx.out.forEach(function (txout) { %>
+			<%=txout.value%>
+			<% if (txout.toAddr.length) { %>
+			  <a href="../../address/<%=txout.toAddr%>"><%=txout.toAddr%></a>
+      <% } %>
 			<br>
 		<% }); %>
 	  </td>

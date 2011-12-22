@@ -1,6 +1,6 @@
 {
   "name": "bitcoin-explorer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A block explorer clone built using BitcoinJS",
   "main": "./lib/bitcoin",
   "keywords": [
@@ -18,13 +18,13 @@
   },
 
   "dependencies": {
-    "bitcoin-p2p": ">=0.0.8",
-    "bigint": ">=0.3.1",
+    "bitcoinjs": ">=0.2.1",
     "ejs": ">=0.4.3",
     "lru-cache": ">=1.0.4",
     "winston": ">=0.3.4",
     "express": ">=2.4.4",
-    "step": ">=0.0.4"
+    "step": ">=0.0.4",
+    "jsonrpc2": ">=0.0.6"
   },
 
   "author": "Stefan Thomas <justmoon@members.fsf.org> (http://www.justmoon.net)",

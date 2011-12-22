@@ -5,17 +5,20 @@
   <thead>
 	<tr>
 	  <td>Number</td>
-	  <td>Hash</td>
 	  <td>Time</td>
+    <td>Transactions</td>
+    <td>Output Value</td>
 	  <td>Size</td>
 	</tr>
   </thead>
   <tbody>
 	<% latestBlocks.forEach(function (block) { %>
+    <% var date = new Date(block.time*1000); %>
 		<tr>
-		  <td><a href="block/<%=Util.formatHashFull(block.hash)%>"><%=block.height-1%></a></td>
-		  <td><span class="mono"><a href="block/<%=Util.formatHashFull(block.hash)%>"><%=Util.formatHashAlt(block.hash)%>&hellip;</a></span></td>
-		  <td><%=new Date(block.timestamp*1000).toUTCString()%></td>
+		  <td><a href="block/<%=block.hash%>"><%=block.height-1%></a></td>
+		  <td class="timeago" title="<%=date.toISOString()%>"><%=date.toUTCString()%></td>
+      <td><%=block.txCount%></td>
+      <td><%=block.totalOut%></td>
 		  <td><%=block.size%></td>
 		</tr>
 	<% }); %>
