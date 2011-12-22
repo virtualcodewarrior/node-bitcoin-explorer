@@ -6,7 +6,7 @@
 var express = require('express');
 var winston = require('winston');
 var Step = require('step');
-var bitcoin = require('bitcoin-p2p');
+var bitcoin = require('bitcoinjs');
 var RpcClient = require('jsonrpc2').Client;
 var bigint = global.bigint = bitcoin.bigint;
 
