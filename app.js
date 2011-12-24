@@ -13,7 +13,7 @@ var bigint = global.bigint = bitcoin.bigint;
 global.Util = require('./util');
 var fs = require('fs');
 
-var init = require('bitcoin-p2p/daemon/init');
+var init = require('bitcoinjs/daemon/init');
 var config = init.getConfig();
 
 var app = module.exports = express.createServer();
