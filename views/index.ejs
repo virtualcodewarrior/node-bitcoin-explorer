@@ -15,7 +15,7 @@
 	<% latestBlocks.forEach(function (block) { %>
     <% var date = new Date(block.time*1000); %>
 		<tr>
-		  <td><a href="block/<%=block.hash%>"><%=block.height-1%></a></td>
+		  <td><a href="block/<%=block.hash%>"><%=block.height%></a></td>
 		  <td class="timeago" title="<%=date.toISOString()%>"><%=date.toUTCString()%></td>
       <td><%=block.txCount%></td>
       <td><%=block.totalOut%></td>
