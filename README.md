@@ -1,14 +1,14 @@
 # node-bitcoin-explorer
 
 This is mostly intended as a demo application for
-[node-bitcoin-p2p](https://github.com/justmoon/node-bitcoin-p2p/). It
+[bitcoinjs-server](https://github.com/bitcoinjs/bitcoinjs-server). It
 replicates most of the functionality of the popular [Block
 Explorer](http://blockexplorer.com/) website.
 
 # Installation
 
 Before you install `node-bitcoin-explorer`, make sure you have
-[node-bitcoin-p2p](https://github.com/bitcoinjs/node-bitcoin-p2p)
+[bitcoinjs-server](https://github.com/bitcoinjs/bitcoinjs-server)
 installed.
 
 ``` sh
